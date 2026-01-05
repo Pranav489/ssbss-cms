@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\ContactInquiryController;
 
 
 
+
+
 Route::get('/hero-slides', [HeroSlideController::class, 'index']);
 Route::get('/hero-slides/{slug}', [HeroSlideController::class, 'show']);
 Route::get('/impact-metrics', [ImpactMetricController::class, 'index']);
@@ -38,3 +40,4 @@ Route::get('/program-pages/{slug}', [ProgramPageController::class, 'show']);
 Route::get('/contact-page', [ContactPageController::class, 'index']);
 Route::post('/contact-inquiries', [ContactInquiryController::class, 'store']);
 Route::get('/contact-inquiries/stats', [ContactInquiryController::class, 'stats']);
+
