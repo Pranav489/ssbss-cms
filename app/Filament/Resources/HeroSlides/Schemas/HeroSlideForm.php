@@ -43,6 +43,7 @@ class HeroSlideForm
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Hero Image')
+                            ->disk('uploads')
                             ->image()
                             ->directory('hero-slides'),
                         

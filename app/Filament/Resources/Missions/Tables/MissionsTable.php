@@ -23,6 +23,7 @@ class MissionsTable
                 
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Image')
+                    ->disk('uploads')
                     ->circular()
                     ->toggleable(),
                 

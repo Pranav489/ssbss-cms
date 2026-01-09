@@ -74,13 +74,10 @@ class JoinMissionForm
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Background/Featured Image')
+                            ->disk('uploads')
                             ->image()
                             ->directory('join-mission')
-                            ->imageEditor()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->maxSize(2048)
-                            ->helperText('Ideal size: 1920x1080px'),
+                            ->maxSize(2048),
                         
                         Forms\Components\TextInput::make('image_alt')
                             ->label('Image Alt Text')

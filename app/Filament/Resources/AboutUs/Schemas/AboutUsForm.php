@@ -65,11 +65,9 @@ class AboutUsForm
 
                         Forms\Components\FileUpload::make('about_image_path')
                             ->label('About Us Image')
+                            ->disk('uploads')
                             ->image()
-                            ->directory('about-us')
-                            ->imageEditor()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('4:3')
+                            ->directory(directory: 'about-us')
                             ->maxSize(2048),
 
                         Forms\Components\TextInput::make('about_image_alt')
@@ -181,13 +179,11 @@ class AboutUsForm
 
                                 Forms\Components\FileUpload::make('image_url')
                                     ->label('Profile Image')
+                                    ->disk('uploads')
                                     ->image()
                                     ->directory('team-members')
-                                    ->imageEditor()
-                                    ->imageResizeMode('cover')
-                                    ->imageCropAspectRatio('1:1')
-                                    ->circleCropper()
-                                    ->maxSize(1024),
+                                    ->circleCropper(),
+                                    // ->maxSize(1024),
 
                                 Forms\Components\TextInput::make('image_alt')
                                     ->label('Image Alt Text')

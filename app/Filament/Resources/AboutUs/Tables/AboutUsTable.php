@@ -19,6 +19,7 @@ class AboutUsTable
             ->columns([
                 Tables\Columns\ImageColumn::make('about_image_path')
                     ->label('About Image')
+                    ->disk('uploads')
                     ->circular()
                     ->toggleable(),
                 

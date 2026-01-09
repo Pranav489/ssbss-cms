@@ -91,9 +91,10 @@ class Document extends Model
 
     // Get download URL
     public function getDownloadUrlAttribute(): string
-    {
-        return route('documents.download', ['document' => $this->id]);
-    }
+{
+    // Use direct file URL instead of API endpoint
+    return $this->file_url;
+}
     public function getFileUrlAttribute(): string
     {
         if ($this->file_path) {

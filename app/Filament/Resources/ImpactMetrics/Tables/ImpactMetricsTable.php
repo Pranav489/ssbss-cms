@@ -18,6 +18,7 @@ class ImpactMetricsTable
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Image')
+                    ->disk('uploads')
                     ->circular()
                     ->toggleable(),
                 

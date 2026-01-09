@@ -1,129 +1,83 @@
 <?php
 
+
 namespace App\Http\Controllers\Api;
 
-use App\Models\ProgramPage;
 use App\Http\Controllers\Controller;
+use App\Models\ProgramPage;
 use Illuminate\Http\Request;
 
 class ProgramPageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $programPages = ProgramPage::active()
-            ->orderBy('sort_order')
-            ->get(['id', 'title', 'slug', 'category', 'category_icon', 'tagline', 'hero_image', 'location']);
+        $query = ProgramPage::active()->ordered();
+        
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->has('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('tagline', 'like', '%' . $request->search . '%')
+                  ->orWhere('overview', 'like', '%' . $request->search . '%');
+            });
+        }
+        
+        $perPage = $request->get('per_page', 10);
+        $programPages = $query->paginate($perPage);
         
         return response()->json([
             'success' => true,
-            'data' => $programPages
+            'data' => $programPages,
+            'message' => 'Program pages retrieved successfully.'
         ]);
     }
     
     public function show($slug)
     {
-        $programPage = ProgramPage::where('slug', $slug)
-            ->where('is_active', true)
-            ->first();
+        $programPage = ProgramPage::where('slug', $slug)->active()->first();
         
         if (!$programPage) {
             return response()->json([
                 'success' => false,
-                'message' => 'Program page not found'
+                'message' => 'Program page not found.'
             ], 404);
         }
         
-        // Process data for frontend
-        $data = [
-            'basic' => [
-                'title' => $programPage->title,
-                'tagline' => $programPage->tagline,
-                'category' => $programPage->category,
-                'category_icon' => $programPage->category_icon,
-            ],
-            'hero' => [
-                'image' => $programPage->hero_image_url,
-                'alt' => $programPage->hero_alt,
-                'stats' => $programPage->hero_stats ?? [],
-            ],
-            'overview' => $programPage->overview ?? [],
-            'location' => [
-                'name' => $programPage->location,
-                'address' => $programPage->address,
-                'coordinates' => $programPage->coordinates,
-                'google_maps_embed' => $programPage->google_maps_embed,
-                'google_maps_link' => $programPage->google_maps_link,
-            ],
-            'registration' => [
-                'number' => $programPage->registration_number,
-                'authority' => $programPage->registration_authority,
-                'highlights' => $programPage->highlights ?? [],
-            ],
-            'statistics' => $programPage->statistics ?? [],
-            'categories' => [
-                'title' => $programPage->categories_title ?? 'Categories',
-                'description' => $programPage->categories_description,
-                'items' => $programPage->categories ?? [],
-            ],
-            'services' => [
-                'title' => $programPage->services_title ?? 'Our Services',
-                'description' => $programPage->services_description,
-                'items' => $programPage->services ?? [],
-            ],
-            'process' => [
-                'title' => $programPage->process_title ?? 'How It Works',
-                'description' => $programPage->process_description,
-                'note' => $programPage->process_note,
-                'steps' => $programPage->process_steps ?? [],
-            ],
-            'documents' => [
-                'required' => $programPage->required_documents ?? [],
-                'note' => $programPage->documents_note,
-            ],
-            'success_stories' => $programPage->success_stories ?? [],
-            'gallery' => [
-                'title' => $programPage->gallery_title ?? 'Gallery',
-                'description' => $programPage->gallery_description,
-                'images' => $programPage->gallery ?? [],
-            ],
-            'contact' => [
-                'title' => $programPage->contact_title ?? 'Contact Us',
-                'description' => $programPage->contact_description,
-                'phone' => $programPage->contact_phone,
-                'email' => $programPage->contact_email,
-                'hours' => $programPage->contact_hours,
-            ],
-            'featured_image' => [
-                'url' => $programPage->featured_image_url,
-                'alt' => $programPage->featured_image_alt,
-            ],
-        ];
-        
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $programPage,
+            'message' => 'Program page retrieved successfully.'
         ]);
     }
     
-    public function categories()
+    public function byCategory($category)
     {
-        $categories = ProgramPage::active()
-            ->select('category')
-            ->selectRaw('COUNT(*) as count')
-            ->groupBy('category')
-            ->get()
-            ->map(function ($item) {
-                $availableCategories = ProgramPage::availableCategories();
-                return [
-                    'id' => $item->category,
-                    'name' => $availableCategories[$item->category] ?? $item->category,
-                    'count' => $item->count,
-                ];
-            });
-        
+        $programPages = ProgramPage::where('category', $category)
+            ->active()
+            ->ordered()
+            ->get();
+            
         return response()->json([
             'success' => true,
-            'data' => $categories
+            'data' => $programPages,
+            'message' => 'Program pages by category retrieved successfully.'
+        ]);
+    }
+    
+    public function featured()
+    {
+        $programPages = ProgramPage::active()
+            ->ordered()
+            ->limit(6)
+            ->get();
+            
+        return response()->json([
+            'success' => true,
+            'data' => $programPages,
+            'message' => 'Featured program pages retrieved successfully.'
         ]);
     }
 }

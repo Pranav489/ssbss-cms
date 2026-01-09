@@ -45,9 +45,7 @@ class ImpactMetricForm
                             ->label('Background Image')
                             ->image()
                             ->directory('impact-metrics')
-                            ->imageEditor()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('4:3')
+                            ->disk('uploads')
                             ->maxSize(2048)
                             ->helperText('Optional background image'),
                         

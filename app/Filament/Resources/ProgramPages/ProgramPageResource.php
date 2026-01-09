@@ -14,14 +14,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProgramPageResource extends Resource
 {
     protected static ?string $model = ProgramPage::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Website Content';
-    // protected static ?int $navigationSort = 1;
-    protected static ?string $modelLabel = 'Program Page';
-    protected static ?string $pluralModelLabel = 'Program Pages';
+    protected static string|UnitEnum|null $navigationGroup = 'Content Management';
+    protected static ?string $navigationLabel = 'Program Pages';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     public static function form(Schema $schema): Schema
@@ -48,5 +49,13 @@ class ProgramPageResource extends Resource
             'create' => CreateProgramPage::route('/create'),
             'edit' => EditProgramPage::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

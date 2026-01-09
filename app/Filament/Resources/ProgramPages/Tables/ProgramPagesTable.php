@@ -3,13 +3,13 @@
 namespace App\Filament\Resources\ProgramPages\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Actions\Action;
-use App\Models\ProgramPage;
 
 class ProgramPagesTable
 {
@@ -20,31 +20,22 @@ class ProgramPagesTable
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-                
                 Tables\Columns\TextColumn::make('category')
                     ->badge()
-                    ->sortable()
-                    ->formatStateUsing(function ($state) {
-                        $categories = ProgramPage::availableCategories();
-                        return $categories[$state] ?? $state;
+                    ->color(fn ($state) => match ($state) {
+                        'welfare' => 'success',
+                        'shelter' => 'warning',
+                        'adoption' => 'danger',
+                        'outreach' => 'info',
+                        default => 'gray',
                     }),
-                
                 Tables\Columns\TextColumn::make('location')
-                    ->searchable()
-                    ->toggleable(),
-                
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
                     ->sortable(),
-                
                 Tables\Columns\TextColumn::make('sort_order')
                     ->sortable(),
-                
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -52,25 +43,24 @@ class ProgramPagesTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->options(ProgramPage::availableCategories()),
-                
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active Status'),
+                    ->options([
+                        'welfare' => 'Welfare',
+                        'shelter' => 'Shelter',
+                        'adoption' => 'Adoption',
+                        'outreach' => 'Outreach',
+                    ]),
+                Tables\Filters\TernaryFilter::make('is_active'),
             ])
             ->recordActions([
-                 EditAction::make(),
+                EditAction::make(),
                 DeleteAction::make(),
-                Action::make('view')
-    ->label('Preview')
-    ->icon('heroicon-o-eye')
-    ->url(fn (ProgramPage $record): string => 'http://localhost:5173/programs/' . $record->slug, true),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    
                 ]),
             ])
-            ->reorderable('sort_order')
             ->defaultSort('sort_order');
     }
 }

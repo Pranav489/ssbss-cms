@@ -79,6 +79,7 @@ class MissionForm
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Featured Image')
+                            ->disk('uploads')
                             ->image()
                             ->directory('mission')
                             ->imageEditor()

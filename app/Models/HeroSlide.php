@@ -37,7 +37,6 @@ class HeroSlide extends Model
         });
     }
 
-    // Available icons for dropdown
     public static function availableIcons(): array
     {
         return [
@@ -58,4 +57,12 @@ class HeroSlide extends Model
             'HeartHandshake' => 'HeartHandshake',
         ];
     }
+
+    public function getImageUrlAttribute()
+{
+    if ($this->image_path) {
+        return asset('uploads/' . $this->image_path);
+    }
+    return null;
+}
 }

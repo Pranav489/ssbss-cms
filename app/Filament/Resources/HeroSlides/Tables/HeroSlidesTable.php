@@ -16,6 +16,7 @@ class HeroSlidesTable
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
+                    ->disk('uploads')
                     ->label('Image')
                     ->circular(),
                 
